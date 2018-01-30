@@ -1,6 +1,7 @@
-name: fair-ml
+name: fairness-in-ml
 channels:
   - defaults
+  - conda-forge
 dependencies:
   - appnope=0.1.0=py36hf537a9a_0
   - bleach=2.1.1=py36h27c13d8_0
