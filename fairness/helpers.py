@@ -54,6 +54,7 @@ def plot_distributions(y_true, Z_true, y_pred, Z_pred=None, epoch=None):
     _subplot(subplot_df, 'sex', ax=axes[1])
     _performance_text(fig, y_true, Z_true, y_pred, Z_pred, epoch)
     fig.tight_layout()
+    return fig
 
 
 def _subplot(subplot_df, col, ax):
