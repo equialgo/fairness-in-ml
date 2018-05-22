@@ -87,7 +87,7 @@ def _performance_text(fig, y_test, Z_test, y_pred, Z_pred=None, epoch=None):
              fontsize='16')
     if Z_pred is not None:
         adv_roc_auc = metrics.roc_auc_score(Z_test, Z_pred)
-        fig.text(1.0, 0.20, '\n'.join(["Adversarial performance:",
+        fig.text(1.0, 0.20, '\n'.join(["Adversary performance:",
                                        f"- ROC AUC: {adv_roc_auc:.2f}"]),
                  fontsize='16')
 
