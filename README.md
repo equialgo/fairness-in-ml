@@ -35,6 +35,12 @@ Activate the virtual environment:
 $ source activate fairness-in-ml
 ```
 
+Install the `fairness` library:
+
+```sh
+$ python setup.py develop
+```
+
 
 ## Contributing
 
