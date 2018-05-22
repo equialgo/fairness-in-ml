@@ -2,6 +2,7 @@ name: fairness-in-ml
 channels:
   - defaults
   - conda-forge
+  - pytorch
 dependencies:
   - ipython
   - jedi
@@ -14,3 +15,4 @@ dependencies:
   - python=3.6
   - scikit-learn
   - seaborn
+  - pytorch
