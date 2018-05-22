@@ -2,6 +2,8 @@
 
 This project demonstrates how make fair machine learning models.
 
+![Fair training](https://github.com/equialgo/fairness-in-ml/raw/master/images/training.gif)
+
 
 ## Notebooks
 
