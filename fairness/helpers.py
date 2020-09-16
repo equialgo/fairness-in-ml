@@ -4,7 +4,6 @@ import pandas as pd
 import seaborn as sns
 from sklearn import metrics
 
-
 def load_ICU_data(path):
     column_names = ['age', 'workclass', 'fnlwgt', 'education', 'education_num',
                     'martial_status', 'occupation', 'relationship', 'race', 'sex',
@@ -56,6 +55,19 @@ def plot_distributions(y_true, Z_true, y_pred, Z_pred=None, epoch=None):
     fig.tight_layout()
     return fig
 
+def plot_distribution(y_true, Z_true, y_pred, Z_pred=None, epoch=None):
+
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4), sharey=True)
+
+    subplot_df = (
+        Z_true
+        .assign(Protected_Group=lambda x: x['Protected_Group'].map({1: 'protected', 0: 'not-protected'}))
+        .assign(y_pred=y_pred)
+    )
+    _subplot(subplot_df, 'Protected_Group', ax=axes[0])
+    _performance_text_single(fig, y_true, Z_true, y_pred, Z_pred, epoch)
+    fig.tight_layout()
+    return fig
 
 def _subplot(subplot_df, col, ax):
     for label, df in subplot_df.groupby(col):
@@ -65,7 +77,7 @@ def _subplot(subplot_df, col, ax):
     ax.set_ylim(0, 7)
     ax.set_yticks([])
     ax.set_ylabel('Prediction distribution')
-    ax.set_xlabel(r'$P({{income>50K}}|z_{{{}}})$'.format(col))
+    ax.set_xlabel(r'$P({{Retained}}|z_{{{}}})$'.format(col))
 
 
 def _performance_text(fig, y_test, Z_test, y_pred, Z_pred=None, epoch=None):
@@ -91,3 +103,39 @@ def _performance_text(fig, y_test, Z_test, y_pred, Z_pred=None, epoch=None):
                                        f"- ROC AUC: {adv_roc_auc:.2f}"]),
                  fontsize='16')
 
+def _performance_text_single(fig, y_test, Z_test, y_pred, Z_pred=None, epoch=None):
+
+    if epoch is not None:
+        fig.text(1.0, 0.9, f"Training epoch #{epoch}", fontsize='16')
+
+    clf_roc_auc = metrics.roc_auc_score(y_test, y_pred)
+    clf_accuracy = metrics.accuracy_score(y_test, y_pred > 0.5) * 100
+    p_rules = {'Protected_Group': p_rule(y_pred, Z_test['Protected_Group'])}
+    fig.text(1.0, 0.65, '\n'.join(["Classifier performance:",
+                                   f"- ROC AUC: {clf_roc_auc:.2f}",
+                                   f"- Accuracy: {clf_accuracy:.1f}"]),
+             fontsize='16')
+    fig.text(1.0, 0.4, '\n'.join(["Satisfied p%-rules:"] +
+                                 [f"- {attr}: {p_rules[attr]:.0f}%-rule"
+                                  for attr in p_rules.keys()]),
+             fontsize='16')
+    if Z_pred is not None:
+        adv_roc_auc = metrics.roc_auc_score(Z_test, Z_pred)
+        fig.text(1.0, 0.20, '\n'.join(["Adversary performance:",
+                                       f"- ROC AUC: {adv_roc_auc:.2f}"]),
+                 fontsize='16')
+
+# https://stackoverflow.com/questions/53322182/imputation-on-the-test-set-with-fancyimpute
+
+# input_data_train = (pd.read_csv('data/siop_2020/siop_2020_train.csv', sep=r'\s*,\s*', engine='python'))
+# input_data_dev = (pd.read_csv('data/siop_2020/siop_2020_dev.csv', sep=r'\s*,\s*', engine='python'))
+# input_data = pd.concat([input_data_train, input_data_dev])
+
+#print(input_data.Protected_Group.unique())
+
+#print(len(input_data_dev))
+#print(len(input_data))
+
+#print(len(X))
+#print(len(y))
+#print(len(Z))
